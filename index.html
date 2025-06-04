@@ -168,6 +168,10 @@
             margin-top: 10px;
             color: #ff4444;
         }
+        .testing-message {
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
         .game-section {
             display: flex;
             flex-wrap: wrap;
@@ -367,6 +371,8 @@
     <div id="executor" class="content">
         <div class="executor">
             <h2>Mazzi Serverside Premium</h2>
+            <div class="testing-message">In testing phase...</div>
+            <button onclick="loadAdminScript()">Admin Script (only script that works)</button>
             <textarea class="code-area" id="codeInput">print hello world</textarea>
             <div class="buttons">
                 <button onclick="executeCode()">EXECUTE</button>
@@ -380,6 +386,7 @@
 
     <script>
         let loggedInUser = '';
+        let adminScriptLoaded = false;
 
         async function getUserIP() {
             try {
@@ -437,6 +444,11 @@
             }
         }
 
+        function loadAdminScript() {
+            document.getElementById('codeInput').value = 'require(121598422784).ADMIN("Username Here")';
+            adminScriptLoaded = true;
+        }
+
         function showPage(page) {
             // Hide all content sections
             const pages = document.querySelectorAll('.content');
@@ -456,15 +468,23 @@
         }
 
         function executeCode() {
-            document.getElementById('status').innerText = 'Could not connect to server!';
+            const statusElement = document.getElementById('status');
+            if (adminScriptLoaded) {
+                statusElement.style.color = '#1e90ff';
+                statusElement.innerText = 'Executed successfully!';
+            } else {
+                statusElement.style.color = '#ff4444';
+                statusElement.innerText = 'Could not connect to server!';
+            }
             setTimeout(() => {
-                document.getElementById('status').innerText = '';
+                statusElement.innerText = '';
             }, 2000);
         }
 
         function clearCode() {
             document.getElementById('codeInput').value = '';
             document.getElementById('status').innerText = '';
+            adminScriptLoaded = false;
         }
     </script>
 </body>
