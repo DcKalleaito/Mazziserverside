@@ -15,6 +15,55 @@
             overflow-y: auto;
             position: relative;
         }
+        .login-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        .login-page.active {
+            display: flex;
+        }
+        .login-page h1 {
+            font-size: 48px;
+            margin: 0;
+            font-weight: 700;
+        }
+        .login-page input {
+            margin: 10px;
+            padding: 10px;
+            width: 200px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .login-page button {
+            background-color: #1e90ff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+        .login-page button:hover {
+            background-color: #1c86ee;
+        }
+        .login-page p {
+            color: #ff4444;
+            margin: 10px 0;
+        }
         .navbar {
             background-color: #2a2a2a;
             padding: 10px;
@@ -22,6 +71,10 @@
             position: absolute;
             width: 100%;
             z-index: 10;
+            display: none;
+        }
+        .navbar.active {
+            display: block;
         }
         .navbar a {
             color: #1e90ff;
@@ -113,7 +166,7 @@
         }
         #status {
             margin-top: 10px;
-            color: #1e90ff;
+            color: #ff4444;
         }
         .game-section {
             display: flex;
@@ -149,14 +202,22 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
+    <div id="loginPage" class="login-page active">
+        <h1>Login to Mazzi Serverside</h1>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="handleLogin()">Login</button>
+        <p id="errorMessage"></p>
+    </div>
+
+    <div id="navbar" class="navbar">
         <a href="#" class="active" onclick="showPage('home')">HOME</a>
         <a href="#" onclick="showPage('account')">ACCOUNT</a>
         <a href="#" onclick="showPage('games')">GAMES</a>
         <a href="#" onclick="showPage('executor')">EXECUTOR</a>
     </div>
 
-    <div id="home" class="content active">
+    <div id="home" class="content">
         <h1>Welcome, kalleaito!</h1>
         <p>Choose contents from above!</p>
         <div class="footer">
@@ -176,7 +237,9 @@
                 <img src="https://via.placeholder.com/300x200" alt="Game Image">
                 <h2>SurRon Update | MX Test Grounds</h2>
                 <p>Playing: 1.1k+</p>
-                <button>JOIN</button>
+                <a href="https://www.roblox.com/games/14121607677/SURRON-UPDATE-MX-Test-Grounds" target="_blank">
+                    <button>JOIN</button>
+                </a>
             </div>
             <div class="game-card blur">
                 <img src="https://via.placeholder.com/300x200" alt="Game Image">
@@ -316,6 +379,21 @@
     </div>
 
     <script>
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (username === 'bob' && password === 'key844221') {
+                // Remove login page and show navbar and home page
+                document.getElementById('loginPage').remove();
+                document.getElementById('navbar').classList.add('active');
+                document.getElementById('home').classList.add('active');
+            } else {
+                errorMessage.innerText = 'Invalid username or password';
+            }
+        }
+
         function showPage(page) {
             // Hide all content sections
             const pages = document.querySelectorAll('.content');
@@ -335,8 +413,7 @@
         }
 
         function executeCode() {
-            const code = document.getElementById('codeInput').value;
-            document.getElementById('status').innerText = 'Executed successfully';
+            document.getElementById('status').innerText = 'Could not connect to server!';
             setTimeout(() => {
                 document.getElementById('status').innerText = '';
             }, 2000);
@@ -346,9 +423,6 @@
             document.getElementById('codeInput').value = '';
             document.getElementById('status').innerText = '';
         }
-
-        // Ensure home page is active on load
-        document.getElementById('home').classList.add('active');
     </script>
 </body>
 </html>
